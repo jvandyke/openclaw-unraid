@@ -33,4 +33,4 @@ COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/index.js", "gateway", "--host", "0.0.0.0"]
