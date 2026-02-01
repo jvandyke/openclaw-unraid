@@ -6,27 +6,28 @@ RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy dependency definitions
-# These files exist because the GitHub Action checked out the OpenClaw code
+# 1. Copy Manifest Files
 COPY package.json pnpm-lock.yaml ./
-COPY pnpm-workspace.yaml .npmrc ./ 
-# (Note: OpenClaw uses pnpm workspaces, so we might need these too)
+COPY pnpm-workspace.yaml .npmrc ./
 
-# Install dependencies
-# Enable corepack to use the pnpm version specified in package.json
+# 2. [FIX] Copy the scripts folder and UI manifest BEFORE install
+# The 'postinstall' script in package.json needs these files to exist
+COPY scripts ./scripts
+COPY ui/package.json ./ui/package.json
+
+# 3. Install dependencies
+# We use --ignore-scripts to prevent other potential failures, 
+# but if the postinstall is critical (likely is for the database/UI), 
+# having the scripts folder present fixes the original error.
 RUN corepack enable && pnpm install --frozen-lockfile
 
-# Copy the rest of the application code (Source + Entrypoint)
+# 4. Copy the rest of the application code
 COPY . .
 
-# Build the application
+# 5. Build the application
 RUN pnpm build
 
 # --- ENTRYPOINT SETUP ---
 RUN chmod +x entrypoint.sh
-
-# Define the entrypoint
 ENTRYPOINT ["/app/entrypoint.sh"]
-
-# Default command
 CMD ["node", "dist/index.js"]
