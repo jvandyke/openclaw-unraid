@@ -2,7 +2,7 @@ name: Build and Push Moltbot
 
 on:
   schedule:
-    - cron: '0 3 * * *' # Daily at 3am
+    - cron: '0 3 * * *'
   workflow_dispatch:
 
 env:
@@ -17,22 +17,22 @@ jobs:
       packages: write
 
     steps:
-      # 1. Checkout repo to get the custom Dockerfile & entrypoint
+      # 1. Checkout YOUR repo (to get Dockerfile & entrypoint)
       - name: Checkout My Custom Assets
         uses: actions/checkout@v4
         with:
           path: my-assets
 
-      # 2. Checkout OpenClaw/Moltbot code
-      # We put this in the root context '.'
+      # 2. Checkout OpenClaw Source WITH SUBMODULES
       - name: Checkout Upstream OpenClaw
         uses: actions/checkout@v4
         with:
           repository: openclaw/openclaw
           ref: main
           path: build-context
+          submodules: recursive
 
-      # 3. Move custom files into the OpenClaw source folder
+      # 3. Inject your custom files into the source code
       - name: Inject Custom Dockerfile and Entrypoint
         run: |
           cp my-assets/Dockerfile build-context/Dockerfile
@@ -54,8 +54,6 @@ jobs:
             type=raw,value=latest
             type=sha
 
-      # 4. Build using the 'build-context' folder
-      # This folder now contains the OpenClaw code + Dockerfile + Your Entrypoint
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
