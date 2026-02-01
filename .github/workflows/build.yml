@@ -2,8 +2,8 @@ name: Build and Push Moltbot
 
 on:
   schedule:
-    - cron: '0 3 * * *'
-  workflow_dispatch: # Allows manual trigger
+    - cron: '0 3 * * *' # Daily at 3am
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -17,11 +17,26 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout Upstream Moltbot/OpenClaw
+      # 1. Checkout repo to get the custom Dockerfile & entrypoint
+      - name: Checkout My Custom Assets
         uses: actions/checkout@v4
         with:
-          repository: openclaw/openclaw # Check official repo name; recently renamed from moltbot/moltbot
+          path: my-assets
+
+      # 2. Checkout OpenClaw/Moltbot code
+      # We put this in the root context '.'
+      - name: Checkout Upstream OpenClaw
+        uses: actions/checkout@v4
+        with:
+          repository: openclaw/openclaw
           ref: main
+          path: build-context
+
+      # 3. Move custom files into the OpenClaw source folder
+      - name: Inject Custom Dockerfile and Entrypoint
+        run: |
+          cp my-assets/Dockerfile build-context/Dockerfile
+          cp my-assets/entrypoint.sh build-context/entrypoint.sh
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -30,7 +45,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels)
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -39,11 +54,13 @@ jobs:
             type=raw,value=latest
             type=sha
 
+      # 4. Build using the 'build-context' folder
+      # This folder now contains the OpenClaw code + Dockerfile + Your Entrypoint
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: Dockerfile
+          context: ./build-context
+          file: ./build-context/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
