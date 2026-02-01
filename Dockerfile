@@ -1,30 +1,30 @@
 # Start from the official Node image
 FROM node:22-bookworm
 
-# Install necessary system tools
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+# Install system tools
+RUN apt-get update && apt-get install -y openssl git && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# 1. Copy Manifest Files
+# 1. Copy Manifests & Scripts
+# We copy the 'scripts' folder early because 'postinstall' hooks need it.
 COPY package.json pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml .npmrc ./
-
-# 2. [FIX] Copy the scripts folder and UI manifest BEFORE install
-# The 'postinstall' script in package.json needs these files to exist
 COPY scripts ./scripts
 COPY ui/package.json ./ui/package.json
 
-# 3. Install dependencies
-# We use --ignore-scripts to prevent other potential failures, 
-# but if the postinstall is critical (likely is for the database/UI), 
-# having the scripts folder present fixes the original error.
+# 2. Install Dependencies
+# We use --frozen-lockfile to ensure reproducible builds
 RUN corepack enable && pnpm install --frozen-lockfile
 
-# 4. Copy the rest of the application code
+# 3. Copy Source Code (Includes the 'ui' folder and submodules)
 COPY . .
 
-# 5. Build the application
+# 4. [CRITICAL FIX] Build the UI
+# This compiles the frontend assets required by the main build
+RUN pnpm ui:build
+
+# 5. Build the Backend
 RUN pnpm build
 
 # --- ENTRYPOINT SETUP ---
