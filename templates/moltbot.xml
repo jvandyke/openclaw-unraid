@@ -2,23 +2,25 @@
 <Container version="2">
   <Name>Moltbot</Name>
   <Repository>ghcr.io/jvandyke/moltbot:latest</Repository>
-  <Registry>https://github.com/jvandyke/moltbot-unraid</Registry>
+  <Registry>https://ghcr.io/jvandyke/moltbot</Registry>
   <Network>bridge</Network>
   <MyIP/>
   <Shell>bash</Shell>
   <Privileged>false</Privileged>
   <Support>https://github.com/jvandyke/moltbot-unraid/issues</Support>
-  <Project>https://openclaw.ai/</Project>
+  <Project>https://openclaw.ai</Project>
   <Overview>
-    Moltbot (OpenClaw) is a local-first, highly capable AI agent.&#xD;
-    &#xD;
-    **Configuration:**&#xD;
-    1. After starting, check the logs. You may need to run the onboarding wizard manually if the token is not set.&#xD;
-    2. To run commands, open the Unraid console for this container and use: `docker compose run --rm openclaw-cli onboard` or edit the config files in your appdata folder.&#xD;
+    OpenClaw (formerly Moltbot) is an autonomous AI agent platform that runs locally.
+    [br][br]
+    [b][font color='red']IMPORTANT SETUP NOTES:[/font][/b][br]
+    1. [b]HTTPS REQUIRED:[/b] Remote access (Tailscale, Nginx) requires HTTPS or the browser will block the UI.[br]
+    2. [b]TOKEN:[/b] Check the Docker Log on first startup to find your Gateway Token.[br]
+    3. [b]PAIRING:[/b] New devices must be approved via the console CLI (see README).[br]
   </Overview>
-  <Category>Productivity: Tools:Artificial Intelligence</Category>
+  <Category>AI: Automation:</Category>
   <WebUI>http://[IP]:[PORT:18789]/</WebUI>
   <Icon>https://raw.githubusercontent.com/openclaw/openclaw/refs/heads/main/ui/public/favicon.svg</Icon>
+  
   <Config Name="Web UI Port" Target="18789" Default="18789" Mode="tcp" Description="The port for the Moltbot Gateway UI." Type="Port" Display="always" Required="true" Mask="false">18789</Config>
   <Config Name="Appdata" Target="/home/node/.openclaw" Default="/mnt/user/appdata/moltbot" Mode="rw" Description="Persistent storage for Moltbot configuration and memory." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/moltbot</Config>
   
@@ -28,12 +30,11 @@
   <Config Name="OpenAI API Key" Target="OPENAI_API_KEY" Default="" Mode="" Description="API Key for OpenAI (GPT-4o, o1, etc)." Type="Variable" Display="always" Required="false" Mask="true"/>
   <Config Name="OpenRouter API Key" Target="OPENROUTER_API_KEY" Default="" Mode="" Description="API Key for OpenRouter.ai." Type="Variable" Display="always" Required="false" Mask="true"/>
   <Config Name="Google Gemini API Key" Target="GOOGLE_API_KEY" Default="" Mode="" Description="API Key for Google Gemini models." Type="Variable" Display="always" Required="false" Mask="true"/>
-  <Config Name="Moonshot API Key" Target="MOONSHOT_API_KEY" Default="" Mode="" Description="API Key for Moonshot AI." Type="Variable" Display="always" Required="false" Mask="true"/>
   <Config Name="Telegram Bot Token" Target="TELEGRAM_BOT_TOKEN" Default="" Mode="" Description="Token from @BotFather for Telegram integration." Type="Variable" Display="always" Required="false" Mask="true"/>
   <Config Name="Discord Bot Token" Target="DISCORD_BOT_TOKEN" Default="" Mode="" Description="Bot token for Discord integration." Type="Variable" Display="always" Required="false" Mask="true"/>
   
   <Config Name="OpenAI Base URL" Target="OPENAI_BASE_URL" Default="" Mode="" Description="Override the Base URL. Useful for local LLMs (Ollama) or proxies." Type="Variable" Display="advanced" Required="false" Mask="false"/>
 
-  <Config Name="Bind Address" Target="OPENCLAW_GATEWAY_BIND" Default="0.0.0.0" Mode="" Description="Fixes 'Site can't be reached'. Forces app to listen on all interfaces." Type="Variable" Display="advanced" Required="true" Mask="false">0.0.0.0</Config>
-  <Config Name="Allow Insecure Auth" Target="OPENCLAW_GATEWAY_CONTROL_UI_ALLOW_INSECURE_AUTH" Default="true" Mode="" Description="Fixes 'Disconnected: HTTPS required'. Allows access via local IP." Type="Variable" Display="advanced" Required="true" Mask="false">true</Config>
+  <Config Name="Public URL (HTTPS Fix)" Target="OPENCLAW_GATEWAY_PUBLIC_URL" Default="" Mode="" Description="Set to your full HTTPS URL (e.g. https://bot.ts.net:8443) to fix blank pages/mixed-content errors." Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Allow Insecure Auth" Target="OPENCLAW_GATEWAY_CONTROL_UI_ALLOW_INSECURE_AUTH" Default="true" Mode="" Description="Required for Unraid/Tailscale to bypass strict SSL checks during handshake." Type="Variable" Display="advanced" Required="true" Mask="false">true</Config>
 </Container>
