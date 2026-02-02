@@ -62,6 +62,47 @@ For security, OpenClaw requires manual approval for any device connecting from a
 
 ---
 
+## Running Multiple Instances (Multi-User)
+
+Moltbot is a "Single-Player" AI with one memory and one chat history. To support multiple users (e.g., you and a partner), you must run **separate Docker containers**.
+
+### Step 1: Add a Second Container
+1. Go to the **Docker** tab in Unraid.
+2. Click **Add Container** at the bottom.
+3. In the **Template** dropdown, select **Moltbot** (it may appear under "User Templates" if you have installed it previously, or simply search for it again in Community Apps and install a second copy).
+
+*Alternative Method:*
+You can also simply install the app again from the **Apps** tab. Unraid will detect the existing install and ask if you want to reinstall or install a second instance (depending on version), or you can manually change the name during the installation screen.
+
+### Step 2: Customize Configuration
+You must change these **3 settings** to prevent conflicts with the first bot:
+
+1. **Name:** Change to something unique (e.g., `Moltbot-User2`).
+2. **WebUI Port:**
+   - Change the **Host Port** to `18790` (or any free port).
+   - *Leave the Container Port as 18789.*
+3. **Appdata Path:**
+   - Change the **Host Path** to `/mnt/user/appdata/moltbot-user2`.
+   - *If you skip this, both bots will corrupt the same database.*
+
+### Step 3: HTTPS for the Second Bot
+Since the new bot is on a new port (`18790`), you need a separate secure tunnel.
+
+1. **Open Unraid Terminal.**
+2. Run a second serve command using a **different HTTPS port** (e.g., 8444):
+   ```bash
+   # Serve the second bot (Host Port 18790) on HTTPS port 8444
+   tailscale serve --bg --https=8444 / http://localhost:18790
+   ```
+3. **Update the Variable:**
+   - In the `Moltbot-User2` settings, set **Public URL** to: `https://your-machine.tailnet.ts.net:8444`
+
+**Result:**
+- **User 1:** Access via `https://...:8443`
+- **User 2:** Access via `https://...:8444`
+
+---
+
 ## 🛠 Troubleshooting
 
 **"Mixed Content" / Blank Page**
