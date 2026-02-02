@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <Container version="2">
-  <Name>Moltbot</Name>
-  <Repository>ghcr.io/jvandyke/moltbot:latest</Repository>
-  <Registry>https://ghcr.io/jvandyke/moltbot</Registry>
+  <Name>OpenClaw</Name>
+  <Repository>ghcr.io/jvandyke/openclaw:latest</Repository>
+  <Registry>https://ghcr.io/jvandyke/openclaw</Registry>
   <Network>bridge</Network>
   <MyIP/>
   <Shell>bash</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/jvandyke/moltbot-unraid/issues</Support>
+  <Support>https://github.com/jvandyke/openclaw-unraid/issues</Support>
   <Project>https://openclaw.ai</Project>
   <Overview>
-    OpenClaw (formerly Moltbot) is an autonomous AI agent platform that runs locally.
+    OpenClaw is an autonomous AI agent platform that runs locally.
     [br][br]
     [b][font color='red']IMPORTANT SETUP NOTES:[/font][/b][br]
     1. [b]HTTPS REQUIRED:[/b] Remote access (Tailscale, Nginx) requires HTTPS or the browser will block the UI.[br]
@@ -21,8 +21,8 @@
   <WebUI>http://[IP]:[PORT:18789]/</WebUI>
   <Icon>https://raw.githubusercontent.com/openclaw/openclaw/refs/heads/main/ui/public/favicon.svg</Icon>
   
-  <Config Name="Web UI Port" Target="18789" Default="18789" Mode="tcp" Description="The port for the Moltbot Gateway UI." Type="Port" Display="always" Required="true" Mask="false">18789</Config>
-  <Config Name="Appdata" Target="/home/node/.openclaw" Default="/mnt/user/appdata/moltbot" Mode="rw" Description="Persistent storage for Moltbot configuration and memory." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/moltbot</Config>
+  <Config Name="Web UI Port" Target="18789" Default="18789" Mode="tcp" Description="The port for the OpenClaw Gateway UI." Type="Port" Display="always" Required="true" Mask="false">18789</Config>
+  <Config Name="Appdata" Target="/home/node/.openclaw" Default="/mnt/user/appdata/openclaw" Mode="rw" Description="Persistent storage for OpenClaw configuration and memory." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/openclaw</Config>
   
   <Config Name="Gateway Token" Target="OPENCLAW_GATEWAY_TOKEN" Default="" Mode="" Description="Secure token for the gateway. If left blank, one may be generated in the logs/config." Type="Variable" Display="always" Required="false" Mask="true"/>
   
